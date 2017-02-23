@@ -1,18 +1,21 @@
-Hi!
-Tristan here, just some notes on getting this working.
+For Makefile: 
+make creates .o files in ./bin/src/
+make creates executable gravity in ./bin/
 
-1. Make sure that the location your SDL2 library is located
-in the same place as in the makefile. In the future we can
-look into using the `shell sdl2-config --cflags` and the
-`shell sdl2-config --libs` commands in the makefiles to get
-the specific flags dependent on the system.
+16:9 vertical aspect ratio
 
-2. There is a small problem I have found in the makefile i threw
-together. While it is building for me currently, if the "bin/" is
-removed from the "bin/%.o: %.cpp" line in the makefile I start
-getting errors. I am not quite sure why there is this behavior so
-it may need to be something that is looked into.
+TODO:
+Sprite map
+Drawable class - rectangles - rectangles - spritemap location coords - frame coods
+    method setVelocity
+    position update methods
+    possible player update static method
+Backgroud consists of rendering all frame space not occupied by Drawable objects
+Drawable player - instance of type object - fixed y
+    needs velocity
+Queue<Drawable> - all onscreen objects excluding player
+user input - possible static method, most likely in main game loop though
+    toggle state of global boolean gravity variable - left right
+    relies on global acceleration variable
 
-3. Lets get crackin! I will try to get sprite sheets working in
-the short term. Getting the update loop with user input, updating
-the state, and redrawing will be the next step.
+
