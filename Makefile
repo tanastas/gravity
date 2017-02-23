@@ -6,17 +6,17 @@ RM=rm -f
 SRCS=$(shell find src/ -name "*.cpp")
 OBJS=$(SRCS:%.cpp=%.o)
 
-bin/%.o: %.cpp
-	echo $(input) $(output)
-	$(CXX) $(CPPFLAGS) -c $(input) -o $(output)
+%.o: %.cpp
+	$(CXX) $(CPPFLAGS) -c $< -o bin/$@
 
 all: gravity
 
 gravity: $(OBJS)
-	$(CXX) $(LDFLAGS) -o bin/$@ $(OBJS) -lSDL2
+	$(CXX) $(LDFLAGS) -o bin/$@ bin/$(OBJS) -lSDL2
 
 clean:
-	$(RM) $(OBJS)
+	$(RM) bin/$(OBJS)
+	$(RM) bin/gravity
 
 test:
 	echo sources - $(SRCS)
