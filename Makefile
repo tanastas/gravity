@@ -7,7 +7,6 @@ SRCS=$(shell find src/ -name "*.cpp")
 OBJS=$(SRCS:%.cpp=%.o)
 
 %.o: %.cpp
-	echo $(input) $(output)
 	$(CXX) $(CPPFLAGS) -c $< -o bin/$@
 
 all: gravity
