@@ -1,20 +1,14 @@
-#include <stdio.h>
-#include <string>
-
-#include "SDL.h"
-#include "SDL_image.h"
-
 #include "drawable.h"
 
-Drawable::Drawable() {
-
-}
+Drawable::Drawable(SDL_Rect dSprite) { this->dSprite = dSprite; }
 
 Drawable::~Drawable() {
     free();
 }
 
-bool loadFromFile(std::string path) {
+static void Drawable::setRenderer(SDL_Renderer* renderer) { dRenderer = renderer; }
+
+static bool loadFromFile(std::string path) {
     free(); //clear pre-loaded image
     SDL_Surface* loadedImage = IMG_Load(path.c_str());
     SDL_Texture* finalTexture = NULL;
@@ -43,7 +37,7 @@ bool loadFromFile(std::string path) {
     return dTexture != NULL;
 }
 
-void Drawable::free() {
+static void Drawable::free() {
     if (dTexture != NULL) {
         SDL_DestroyTexture(dTextrue);
         dTexture = NULL;
@@ -62,6 +56,6 @@ void Drawable::render(int x, int y, SDL_Rect* sprite) {
     SDL_RenderCopy(dRenderer, dTexture, sprite, &renderSpace);
 }
 
-int Drawable::getImageWidth() { return imageWidth; }
+static int Drawable::getImageWidth() { return imageWidth; }
 
-int Drawable::getImageHeight() { return imageHeight; }
+static int Drawable::getImageHeight() { return imageHeight; }

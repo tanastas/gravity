@@ -1,31 +1,34 @@
 #ifndef DRAWABLE_HPP_
 #define DRAWABLE_HPP_
 
+#include <string>
 #include "SDL.h"
 #include "SDL_image.h"
 
 class Drawable {
 public:
-    Drawable(); //TODO: arguments??
+    Drawable(SDL_Rect dSprite);
     ~Drawable();
 
-    bool loadFromFile( std::string path );
+    static void setRenderer(SDL_Renderer* dRenderer);
 
-	void free();
+    static bool loadFromFile( std::string path );
+
+	static void free();
 
 	void render( int x, int y, SDL_Rect* sprite = NULL );
 
-    int getImageWidth();
-    int getImageHeight();
+    static int getImageWidth();
+    static int getImageHeight();
     
 
 private:
-    SDL_Renderer* dRenderer
-    SDL_Texture* dTexture;
+    static SDL_Renderer* dRenderer = NULL;
+    static SDL_Texture* dTexture = NULL;
+    static int imageWidth = 0, imageHeight = 0;
 
     SDL_Rect dSprite; //contains sprite x, y coords on spritemap, w, h
     
-    int imageWidth, imageHeight;
 }
 
 #endif /* DRAWABLE_HPP_ */
