@@ -14,9 +14,9 @@ public:
 
     static bool loadFromFile( std::string path );
 
-	static void free();
+    static void free();
 
-	void render( int x, int y, SDL_Rect* sprite = NULL );
+    void render( int x, int y, SDL_Rect* sprite = NULL );
 
     static int getImageWidth();
     static int getImageHeight();

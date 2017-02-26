@@ -17,10 +17,10 @@ static bool loadFromFile(std::string path) {
         printf( "Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError() );
     }
     else {
-        SDL_SetColorKey( loadedSurface, SDL_TRUE, SDL_MapRGB( loadedSurface->format, 0, 0xFF, 0xFF ) );
+        SDL_SetColorKey( loadedImage, SDL_TRUE, SDL_MapRGB( loadedImage->format, 0, 0xFF, 0xFF ) );
         finalTexture = SDL_CreateTextureFromSurface(dRederer, loadedImage);
 
-        if ( newTexture == NULL ) {
+        if ( finalTexture == NULL ) {
              printf( "Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError() );
 		}
 		else {
