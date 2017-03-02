@@ -4,18 +4,18 @@ LDFLAGS=-L/usr/lib/x86_64-linux-gnu
 RM=rm -f
 
 SRCS=$(shell find src/ -name "*.cpp")
-OBJS=$(SRCS:%.cpp=%.o)
+OBJS=$(SRCS:%.cpp=bin/%.o)
 
-%.o: %.cpp
-	$(CXX) $(CPPFLAGS) -c $< -o bin/$@
+bin/%.o: %.cpp
+	$(CXX) $(CPPFLAGS) -c $< -o $@
 
 all: gravity
 
 gravity: $(OBJS)
-	$(CXX) $(LDFLAGS) -o bin/$@ bin/$(OBJS) -lSDL2
+	$(CXX) $(LDFLAGS) -o bin/$@ $(OBJS) -lSDL2 -lSDL2_image
 
 clean:
-	$(RM) bin/$(OBJS)
+	$(RM) $(OBJS)
 	$(RM) bin/gravity
 
 test:
