@@ -53,14 +53,39 @@ void Drawable::free() {
     }
 }
 //renders a sprite from dTexture to x, y in frame
-void Drawable::render(int x, int y, SDL_Rect* sprite) {
-    SDL_Rect renderSpace = {x, y, imageWidth, imageHeight};
-
-    if (sprite != NULL) {
-        renderSpace.w = sprite->w;
-        renderSpace.h = sprite->h;
+void Drawable::render(int x, int y) {
+    if (dRenderer == NULL) {
+        printf("Error rendering: Renderer not set\n");
+        return;
     }
-    SDL_RenderCopy(dRenderer, dTexture, sprite, &renderSpace);
+    //scale for display
+    int scale = 10;
+
+    renderSpace.x = x;
+    renderSpace.y = y;
+
+    renderSpace.w = dSprite.w * scale;
+    renderSpace.h = dSprite.h * scale;
+
+    SDL_RenderCopy(dRenderer, dTexture, &dSprite, &renderSpace);
+}
+//x collision detection
+bool Drawable::operator <(const Drawable &rhs) {
+    if (dSprite.x < (rhs.dSprite.x + rhs.dSprite.w))
+        return true;
+    else if ((dSprite.x + dSprite.w) > rhs.dSprite.x)
+        return true;
+    else
+        return false;
+}
+//y collision detection
+bool Drawable::operator >(const Drawable &rhs) {
+    if (dSprite.y < (rhs.dSprite.y + rhs.dSprite.l))
+        return true;
+    else if ((dSprite.y + dSprite.w) > rhs.dSprite.y)
+        return true;
+    else
+        return false;
 }
 //spritemap width
 int Drawable::getImageWidth() { return imageWidth; }

@@ -17,6 +17,9 @@ public:
     static void free();
 
     void render( int x, int y, SDL_Rect* sprite = NULL );
+    
+    bool operator <(const Drawable &rhs); //used for x collision detection
+    bool operator >(const Drawable &rhs); //used for y collision detection
 
     static int getImageWidth();
     static int getImageHeight();
@@ -28,6 +31,7 @@ private:
     static int imageWidth, imageHeight;
 
     SDL_Rect dSprite; //contains sprite x, y coords on spritemap, w, h
+    SDL_Rect renderSpace; //contains frame render coords
     
 };
 
