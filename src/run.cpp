@@ -8,15 +8,15 @@
 // Example program:
 // Using SDL2 to create an application window
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 #include <iostream>
+
+#include "resource.hpp"
+#include "game.hpp"
 
 
 int main(int argc, char* argv[]){
-
-	/* Initialise what is needed.
-	 * */
-	// SDL Window
+    // SDL Window
     SDL_Window *gWindow = NULL;
     // SDL Renderer
     SDL_Renderer *gRenderer = NULL;
@@ -26,13 +26,17 @@ int main(int argc, char* argv[]){
     bool done = false;
     // Set up the event
     SDL_Event event;
+    // Time vars
+    unsigned int lastTime, currentTime, tDelta;
+    // Resources
+    Game game;
     // Set up the window
     gWindow = SDL_CreateWindow(
-        "An SDL2 window",                  // window title
+        "Gravity - The Game",              // window title
         SDL_WINDOWPOS_UNDEFINED,           // initial x position
         SDL_WINDOWPOS_UNDEFINED,           // initial y position
-        640,                               // width, in pixels
-        480,                               // height, in pixels
+        450,                               // width, in pixels
+        800,                               // height, in pixels
         SDL_WINDOW_OPENGL                  // flags - see below
     );
 
@@ -40,24 +44,34 @@ int main(int argc, char* argv[]){
 
     // Check that the window was successfully created
     if (gWindow == NULL) {
-        // In the case that the window could not be made...
+        // If not, log error.
         std::cout << "Could not create window: " << SDL_GetError() << std::endl;
         return 1;
     }
-
-    while( !done ){
-    	// check events
+    // Load resources
+    game = Game();
+    game.init(gRenderer);
+    lastTime = SDL_GetTicks();
+    while(!done){
+    	// quit
     	while(SDL_PollEvent(&event)){
-    		if(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE){
-    			done = true;
-    		}
+	    if(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE){
+      		done = true;
+    	    }
+	    // Get user commands here ...
     	}
-    	// do calculations
+    	// Update player
+	// Update objects (player + map)
 
+	// TODO give render its own function
+	currentTime = SDL_GetTicks();
+	tDelta = currentTime - lastTime;
+	lastTime = currentTime;
     	// clear screen
     	SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
     	SDL_RenderClear( gRenderer );
     	// render display
+	game.renderBG(tDelta);
     	SDL_RenderPresent( gRenderer );
     }
 

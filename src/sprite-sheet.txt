@@ -1,0 +1,14 @@
+left-side
+2 2 4 97
+right-side
+43 2 4 97
+background
+6 2 37 97
+player-g-left
+49 15 7 13
+player-g-right
+57 15 7 13
+long-box
+49 2 24 10
+small-box
+69 18 10 10
