@@ -1,18 +1,20 @@
 #include "drawable.hpp"
 
+//initialize static variables
 SDL_Renderer* Drawable::dRenderer = NULL;
 SDL_Texture* Drawable::dTexture = NULL;
 int Drawable::imageWidth = 0;
 int Drawable::imageHeight = 0;
 
+//constructor
 Drawable::Drawable(SDL_Rect dSprite) { this->dSprite = dSprite; }
-
+//destructor
 Drawable::~Drawable() {
     free();
 }
-
+//sets static renderer
 void Drawable::setRenderer(SDL_Renderer* renderer) { dRenderer = renderer; }
-
+//loads spritemap
 bool Drawable::loadFromFile(std::string path) {
     free(); //clear pre-loaded image
     SDL_Surface* loadedImage = IMG_Load(path.c_str());
@@ -37,11 +39,11 @@ bool Drawable::loadFromFile(std::string path) {
     SDL_FreeSurface(loadedImage);
 
     }
-
+    //sets the actual static member
     dTexture = finalTexture;
     return dTexture != NULL;
 }
-
+//clears dTexture
 void Drawable::free() {
     if (dTexture != NULL) {
         SDL_DestroyTexture(dTexture);
@@ -50,7 +52,7 @@ void Drawable::free() {
         imageHeight = 0;
     }
 }
-
+//renders a sprite from dTexture to x, y in frame
 void Drawable::render(int x, int y, SDL_Rect* sprite) {
     SDL_Rect renderSpace = {x, y, imageWidth, imageHeight};
 
@@ -60,7 +62,7 @@ void Drawable::render(int x, int y, SDL_Rect* sprite) {
     }
     SDL_RenderCopy(dRenderer, dTexture, sprite, &renderSpace);
 }
-
+//spritemap width
 int Drawable::getImageWidth() { return imageWidth; }
-
+//spritemap height
 int Drawable::getImageHeight() { return imageHeight; }

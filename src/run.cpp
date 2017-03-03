@@ -55,23 +55,26 @@ int main(int argc, char* argv[]){
     while(!done){
     	// quit
     	while(SDL_PollEvent(&event)){
-	    if(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE){
-      		done = true;
+	        if(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE){
+      		    done = true;
     	    }
-	    // Get user commands here ...
-    	}
+            else if( event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE){ 
+                //if spacebar is pressed
+                //TODO swap gravity
+            }
+        }
     	// Update player
-	// Update objects (player + map)
+	    // Update objects (player + map)
 
-	// TODO give render its own function
-	currentTime = SDL_GetTicks();
-	tDelta = currentTime - lastTime;
-	lastTime = currentTime;
+	    // TODO give render its own function
+        currentTime = SDL_GetTicks();
+	    tDelta = currentTime - lastTime;
+	    lastTime = currentTime;
     	// clear screen
     	SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
     	SDL_RenderClear( gRenderer );
     	// render display
-	game.renderBG(tDelta);
+	    game.renderBG(tDelta);
     	SDL_RenderPresent( gRenderer );
     }
 
