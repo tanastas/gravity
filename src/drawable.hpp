@@ -23,12 +23,12 @@ public:
     
 
 private:
-    static SDL_Renderer* dRenderer = NULL;
-    static SDL_Texture* dTexture = NULL;
-    static int imageWidth = 0, imageHeight = 0;
+    static SDL_Renderer* dRenderer;
+    static SDL_Texture* dTexture;
+    static int imageWidth, imageHeight;
 
     SDL_Rect dSprite; //contains sprite x, y coords on spritemap, w, h
     
-}
+};
 
 #endif /* DRAWABLE_HPP_ */

@@ -1,4 +1,9 @@
-#include "drawable.h"
+#include "drawable.hpp"
+
+SDL_Renderer* Drawable::dRenderer = NULL;
+SDL_Texture* Drawable::dTexture = NULL;
+int Drawable::imageWidth = 0;
+int Drawable::imageHeight = 0;
 
 Drawable::Drawable(SDL_Rect dSprite) { this->dSprite = dSprite; }
 
@@ -6,9 +11,9 @@ Drawable::~Drawable() {
     free();
 }
 
-static void Drawable::setRenderer(SDL_Renderer* renderer) { dRenderer = renderer; }
+void Drawable::setRenderer(SDL_Renderer* renderer) { dRenderer = renderer; }
 
-static bool loadFromFile(std::string path) {
+bool Drawable::loadFromFile(std::string path) {
     free(); //clear pre-loaded image
     SDL_Surface* loadedImage = IMG_Load(path.c_str());
     SDL_Texture* finalTexture = NULL;
@@ -18,7 +23,7 @@ static bool loadFromFile(std::string path) {
     }
     else {
         SDL_SetColorKey( loadedImage, SDL_TRUE, SDL_MapRGB( loadedImage->format, 0, 0xFF, 0xFF ) );
-        finalTexture = SDL_CreateTextureFromSurface(dRederer, loadedImage);
+        finalTexture = SDL_CreateTextureFromSurface(dRenderer, loadedImage);
 
         if ( finalTexture == NULL ) {
              printf( "Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError() );
@@ -37,9 +42,9 @@ static bool loadFromFile(std::string path) {
     return dTexture != NULL;
 }
 
-static void Drawable::free() {
+void Drawable::free() {
     if (dTexture != NULL) {
-        SDL_DestroyTexture(dTextrue);
+        SDL_DestroyTexture(dTexture);
         dTexture = NULL;
         imageWidth = 0;
         imageHeight = 0;
@@ -56,6 +61,6 @@ void Drawable::render(int x, int y, SDL_Rect* sprite) {
     SDL_RenderCopy(dRenderer, dTexture, sprite, &renderSpace);
 }
 
-static int Drawable::getImageWidth() { return imageWidth; }
+int Drawable::getImageWidth() { return imageWidth; }
 
-static int Drawable::getImageHeight() { return imageHeight; }
+int Drawable::getImageHeight() { return imageHeight; }
