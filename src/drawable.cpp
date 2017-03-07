@@ -15,12 +15,15 @@ Drawable::Drawable(SDL_Rect dSprite, SDL_Rect renderSpace, float velocity) {
     this->realX = renderSpace.x;
     this->realY = renderSpace.y;
 }
+
 //destructor
 Drawable::~Drawable() {
     free();
 }
+
 //sets static renderer
 void Drawable::setRenderer(SDL_Renderer* renderer) { dRenderer = renderer; }
+
 //loads spritemap
 bool Drawable::loadFromFile(std::string path) {
     free(); //clear pre-loaded image
@@ -31,6 +34,7 @@ bool Drawable::loadFromFile(std::string path) {
         printf( "Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError() );
     }
     else {
+        //COLOR KEY CYAN
         SDL_SetColorKey( loadedImage, SDL_TRUE, SDL_MapRGB( loadedImage->format, 0, 0xFF, 0xFF ) );
         finalTexture = SDL_CreateTextureFromSurface(dRenderer, loadedImage);
 
@@ -50,6 +54,7 @@ bool Drawable::loadFromFile(std::string path) {
     dTexture = finalTexture;
     return dTexture != NULL;
 }
+
 //clears dTexture
 void Drawable::free() {
     if (dTexture != NULL) {
@@ -59,6 +64,7 @@ void Drawable::free() {
         imageHeight = 0;
     }
 }
+
 //renders a sprite from dTexture to x, y in frame
 void Drawable::render() {
     if (dRenderer == NULL) {
@@ -68,15 +74,18 @@ void Drawable::render() {
 
     SDL_RenderCopy(dRenderer, dTexture, &dSprite, &renderSpace);
 }
+
 //updates drawables position
 void Drawable::updatePositionX(float tDelta) {
     realX = realX + tDelta * velocity;
     renderSpace.x = (int) realX;
 }
+
 void Drawable::updatePositionY(float tDelta) {
     realY = realY + tDelta * velocity;
     renderSpace.y = (int) realY;
 }
+
 //x collision detection
 bool Drawable::operator <(const Drawable &rhs) {
     if (renderSpace.x < (rhs.renderSpace.x + rhs.renderSpace.w))
@@ -86,6 +95,7 @@ bool Drawable::operator <(const Drawable &rhs) {
     else
         return false;
 }
+
 //y collision detection
 bool Drawable::operator >(const Drawable &rhs) {
     if (renderSpace.y < (rhs.renderSpace.y + rhs.renderSpace.l))
@@ -95,7 +105,9 @@ bool Drawable::operator >(const Drawable &rhs) {
     else
         return false;
 }
+
 //spritemap width
 int Drawable::getImageWidth() { return imageWidth; }
+
 //spritemap height
 int Drawable::getImageHeight() { return imageHeight; }
