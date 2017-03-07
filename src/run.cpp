@@ -76,7 +76,6 @@ int main(int argc, char* argv[]){
     	SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
     	SDL_RenderClear( gRenderer );
     	// render display
-	    game.renderBG(tDelta);
     	SDL_RenderPresent( gRenderer );
     }
 
