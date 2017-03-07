@@ -7,7 +7,7 @@
 
 class Drawable {
 public:
-    Drawable(SDL_Rect dSprite);
+    Drawable(SDL_Rect dSprite, SDL_Rect renderSpace, float velocity);
     ~Drawable();
 
     static void setRenderer(SDL_Renderer* dRenderer);
@@ -16,8 +16,12 @@ public:
 
     static void free();
 
-    void render( int x, int y, SDL_Rect* sprite = NULL );
-    
+    void render();
+
+    void updatePositionX(float tDelta);
+
+    void updatePositionY(float tDelta);
+   
     bool operator <(const Drawable &rhs); //used for x collision detection
     bool operator >(const Drawable &rhs); //used for y collision detection
 
@@ -28,8 +32,12 @@ public:
 private:
     static SDL_Renderer* dRenderer;
     static SDL_Texture* dTexture;
-    static int imageWidth, imageHeight;
+    static int imageWidth, imageHeight, scale;
 
+    bool solid;
+
+    float velocity, realX, realY;
+    
     SDL_Rect dSprite; //contains sprite x, y coords on spritemap, w, h
     SDL_Rect renderSpace; //contains frame render coords
     

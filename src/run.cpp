@@ -11,11 +11,12 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 
-#include "resource.hpp"
-#include "game.hpp"
+#include "drawable.hpp"
 
 
 int main(int argc, char* argv[]){
+    //gravity constant
+    float grav = 9.8;
     // SDL Window
     SDL_Window *gWindow = NULL;
     // SDL Renderer
@@ -28,8 +29,6 @@ int main(int argc, char* argv[]){
     SDL_Event event;
     // Time vars
     unsigned int lastTime, currentTime, tDelta;
-    // Resources
-    Game game;
     // Set up the window
     gWindow = SDL_CreateWindow(
         "Gravity - The Game",              // window title
@@ -42,15 +41,17 @@ int main(int argc, char* argv[]){
 
     gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
 
+    //set renderer of drawables
+    Drawable::setRenderer(gRenderer);
+    //load sprite map
+    Drawable::loadFromFile("sprite-map.png");
+
     // Check that the window was successfully created
     if (gWindow == NULL) {
         // If not, log error.
         std::cout << "Could not create window: " << SDL_GetError() << std::endl;
         return 1;
     }
-    // Load resources
-    game = Game();
-    game.init(gRenderer);
     lastTime = SDL_GetTicks();
     while(!done){
     	// quit
@@ -60,7 +61,8 @@ int main(int argc, char* argv[]){
     	    }
             else if( event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE){ 
                 //if spacebar is pressed
-                //TODO swap gravity
+                // swap gravity
+                grav = grav * (-1);
             }
         }
     	// Update player

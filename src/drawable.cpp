@@ -5,9 +5,16 @@ SDL_Renderer* Drawable::dRenderer = NULL;
 SDL_Texture* Drawable::dTexture = NULL;
 int Drawable::imageWidth = 0;
 int Drawable::imageHeight = 0;
+int Drawable::scale = 10;
 
 //constructor
-Drawable::Drawable(SDL_Rect dSprite) { this->dSprite = dSprite; }
+Drawable::Drawable(SDL_Rect dSprite, SDL_Rect renderSpace, float velocity) { 
+    this->dSprite = dSprite;
+    this->renderSpace = renderSpace;
+    this->velocity = velocity;
+    this->realX = renderSpace.x;
+    this->realY = renderSpace.y;
+}
 //destructor
 Drawable::~Drawable() {
     free();
@@ -53,36 +60,37 @@ void Drawable::free() {
     }
 }
 //renders a sprite from dTexture to x, y in frame
-void Drawable::render(int x, int y) {
+void Drawable::render() {
     if (dRenderer == NULL) {
         printf("Error rendering: Renderer not set\n");
         return;
     }
-    //scale for display
-    int scale = 10;
-
-    renderSpace.x = x;
-    renderSpace.y = y;
-
-    renderSpace.w = dSprite.w * scale;
-    renderSpace.h = dSprite.h * scale;
 
     SDL_RenderCopy(dRenderer, dTexture, &dSprite, &renderSpace);
 }
+//updates drawables position
+void Drawable::updatePositionX(float tDelta) {
+    realX = realX + tDelta * velocity;
+    renderSpace.x = (int) realX;
+}
+void Drawable::updatePositionY(float tDelta) {
+    realY = realY + tDelta * velocity;
+    renderSpace.y = (int) realY;
+}
 //x collision detection
 bool Drawable::operator <(const Drawable &rhs) {
-    if (dSprite.x < (rhs.dSprite.x + rhs.dSprite.w))
+    if (renderSpace.x < (rhs.renderSpace.x + rhs.renderSpace.w))
         return true;
-    else if ((dSprite.x + dSprite.w) > rhs.dSprite.x)
+    else if ((renderSpace.x + renderSpace.w) > rhs.renderSpace.x)
         return true;
     else
         return false;
 }
 //y collision detection
 bool Drawable::operator >(const Drawable &rhs) {
-    if (dSprite.y < (rhs.dSprite.y + rhs.dSprite.l))
+    if (renderSpace.y < (rhs.renderSpace.y + rhs.renderSpace.l))
         return true;
-    else if ((dSprite.y + dSprite.w) > rhs.dSprite.y)
+    else if ((renderSpace.y + renderSpace.w) > rhs.renderSpace.y)
         return true;
     else
         return false;
