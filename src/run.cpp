@@ -44,7 +44,7 @@ int main(int argc, char* argv[]){
     //set renderer of drawables
     Drawable::setRenderer(gRenderer);
     //load sprite map
-    Drawable::loadFromFile("sprite-sheet.png");
+    Drawable::loadFromFile("src/sprite-sheet.png");
 
     // Check that the window was successfully created
     if (gWindow == NULL) {

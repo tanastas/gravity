@@ -98,9 +98,9 @@ bool Drawable::operator <(const Drawable &rhs) {
 
 //y collision detection
 bool Drawable::operator >(const Drawable &rhs) {
-    if (renderSpace.y < (rhs.renderSpace.y + rhs.renderSpace.l))
+    if (renderSpace.y < (rhs.renderSpace.y + rhs.renderSpace.h))
         return true;
-    else if ((renderSpace.y + renderSpace.w) > rhs.renderSpace.y)
+    else if ((renderSpace.y + renderSpace.h) > rhs.renderSpace.y)
         return true;
     else
         return false;
