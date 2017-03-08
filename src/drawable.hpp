@@ -27,6 +27,12 @@ public:
     bool operator <(const Drawable &rhs); //used for x collision detection
     bool operator >(const Drawable &rhs); //used for y collision detection
 
+    void setX(float);
+    void setY(float);
+    float getX();
+    float getY();
+    
+  
     static int getImageWidth();
     static int getImageHeight();
     

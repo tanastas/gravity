@@ -11,6 +11,8 @@ int Drawable::scale = 10;
 Drawable::Drawable(SDL_Rect dSprite, SDL_Rect renderSpace, float velocity) { 
     this->dSprite = dSprite;
     this->renderSpace = renderSpace;
+    this->renderSpace.w = dSprite.w * Drawable::scale;
+    this->renderSpace.h = dSprite.h * Drawable::scale;
     this->velocity = velocity;
     this->realX = renderSpace.x;
     this->realY = renderSpace.y;
@@ -121,3 +123,21 @@ int Drawable::getImageWidth() { return imageWidth; }
 
 //spritemap height
 int Drawable::getImageHeight() { return imageHeight; }
+
+void Drawable::setX(float x){
+    renderSpace.x = x; 
+    realX = x;
+}
+
+void Drawable::setY(float y){
+    renderSpace.y = y;
+    realY = y;
+}
+
+float Drawable::getX(){
+    return realX;
+}
+
+float Drawable::getY(){
+    return realY;
+}

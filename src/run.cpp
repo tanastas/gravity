@@ -10,6 +10,7 @@
 
 #include <SDL2/SDL.h>
 #include <iostream>
+#include <vector>
 
 #include "drawable.hpp"
 
@@ -25,10 +26,14 @@ int main(int argc, char* argv[]){
     SDL_Rect playerGRight = {57, 15, 7, 13};
     SDL_Rect longBox = {49, 2, 24, 10};
     SDL_Rect smallBox = {69, 18, 10, 10};
+    std::vector<Drawable> drawablesBG;
     //TODO: Vectors for Drawables, specifically two
     //one vector for background objects and one for scrolling objects
     //player not needed in either vector
     //TODO: Generate drawables with given velocities
+    drawablesBG.push_back(Drawable(leftSide, SDL_Rect({0, 0, 0, 0}), 0.05));
+    drawablesBG.push_back(Drawable(background, SDL_Rect({leftSide.w * 10, 0, 0, 0}), 0.025));
+    drawablesBG.push_back(Drawable(rightSide, SDL_Rect({((leftSide.w + background.w) * 10), 0, 0, 0}), 0.05));
 
     // SDL Window
     SDL_Window *gWindow = NULL;
@@ -69,8 +74,8 @@ int main(int argc, char* argv[]){
     while(!done){
     	// quit
     	while(SDL_PollEvent(&event)){
-	        if(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE){
-      		    done = true;
+	    if(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE){
+	      done = true;
     	    }
             else if( event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE){ 
                 //if spacebar is pressed
@@ -78,16 +83,28 @@ int main(int argc, char* argv[]){
                 grav = grav * (-1);
             }
         }
-        //TODO:
-    	// Update player
-	    // Update objects (player + map)
-        //render all objects
         currentTime = SDL_GetTicks();
-	    tDelta = currentTime - lastTime;
-	    lastTime = currentTime;
+	tDelta = currentTime - lastTime;
+	lastTime = currentTime;
+        //TODO:
+        // Update objects (player + map)
+	for (auto it = drawablesBG.begin(); it != drawablesBG.end(); it++) {
+	    it->updatePositionY(tDelta);
+	    if (it->getY() > 0.0) {
+	        it->setY(it->getY() - 60.0);
+	    }
+	}
+    	// Update player
     	// clear screen
     	SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
     	SDL_RenderClear( gRenderer );
+	// Render objects
+	// BG
+	for (auto it = drawablesBG.begin(); it != drawablesBG.end(); it++) {
+	    it->render();
+	}
+	// obstacles
+	// player
     	// render display
     	SDL_RenderPresent( gRenderer );
     }
