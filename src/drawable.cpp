@@ -81,8 +81,18 @@ void Drawable::updatePositionX(float tDelta) {
     renderSpace.x = (int) realX;
 }
 
+void Drawable::updatePositionX(float tDelta, float accel) {
+    realX = realX + tDelta * velocity * accel;
+    renderSpace.x = (int) realX;
+}
+
 void Drawable::updatePositionY(float tDelta) {
     realY = realY + tDelta * velocity;
+    renderSpace.y = (int) realY;
+}
+
+void Drawable::updatePositionY(float tDelta, float accel) {
+    realY = realY + tDelta * velocity * accel;
     renderSpace.y = (int) realY;
 }
 

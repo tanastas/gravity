@@ -19,9 +19,11 @@ public:
     void render();
 
     void updatePositionX(float tDelta);
-
-    void updatePositionY(float tDelta);
+    void updatePositionX(float tDelta, float accel);
    
+    void updatePositionY(float tDelta);
+    void updatePositionY(float tDelta, float accel);
+
     bool operator <(const Drawable &rhs); //used for x collision detection
     bool operator >(const Drawable &rhs); //used for y collision detection
 
