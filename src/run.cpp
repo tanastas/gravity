@@ -17,6 +17,19 @@
 int main(int argc, char* argv[]){
     //gravity constant
     float grav = 9.8;
+    //Rects for our seven sprites
+    SDL_Rect leftSide = {2, 2, 4, 97};
+    SDL_Rect rightSide = {43, 2, 4, 97};
+    SDL_Rect background = {6, 2, 37, 97};
+    SDL_Rect playerGLeft = {49, 15, 7, 13};
+    SDL_Rect playerGRight = {57, 15, 7, 13};
+    SDL_Rect longBox = {49, 2, 24, 10};
+    SDL_Rect smallBox = {69, 18, 10, 10};
+    //TODO: Vectors for Drawables, specifically two
+    //one vector for background objects and one for scrolling objects
+    //player not needed in either vector
+    //TODO: Generate drawables with given velocities
+
     // SDL Window
     SDL_Window *gWindow = NULL;
     // SDL Renderer
@@ -65,10 +78,10 @@ int main(int argc, char* argv[]){
                 grav = grav * (-1);
             }
         }
+        //TODO:
     	// Update player
 	    // Update objects (player + map)
-
-	    // TODO give render its own function
+        //render all objects
         currentTime = SDL_GetTicks();
 	    tDelta = currentTime - lastTime;
 	    lastTime = currentTime;
