@@ -141,3 +141,15 @@ float Drawable::getX(){
 float Drawable::getY(){
     return realY;
 }
+
+int Drawable::getW(){
+    return renderSpace.w;
+}
+
+int Drawable::getH(){
+    return renderSpace.h;
+}
+
+int Drawable::getScale() {
+    return scale;
+}
