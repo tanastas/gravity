@@ -114,9 +114,10 @@ int main(int argc, char* argv[]){
 	obstDelta += tDelta;
 	if (obstDelta > obstFreq){
 	    std::cout << "Adding obst!\n";
+	    std::cout << "Number of obst: " << drawablesObst.size() << std::endl;
 	    // remeber gameRect.y == 0
 	    drawablesObst.push_back(Drawable(smallBox,
-					     SDL_Rect({gameRect.x, 0, 0, 0}),
+					     SDL_Rect({gameRect.x, smallBox.h * -10, 0, 0}),
 					     0.05));
 	    //set renderer of drawables
 	    Drawable::setRenderer(gRenderer);
