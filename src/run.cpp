@@ -18,6 +18,9 @@
 int main(int argc, char* argv[]){
     //gravity constant
     float grav = 9.8;
+    // obstacle vars
+    int obstFreq = 4000;
+    int obstDelta = 0;
     //Rects for our seven sprites
     SDL_Rect leftSide = {2, 2, 4, 97};
     SDL_Rect rightSide = {43, 2, 4, 97};
@@ -26,15 +29,13 @@ int main(int argc, char* argv[]){
     SDL_Rect playerGRight = {57, 15, 7, 13};
     SDL_Rect longBox = {49, 2, 24, 10};
     SDL_Rect smallBox = {69, 18, 10, 10};
+    SDL_Rect gameRect = {leftSide.w * 10, 0, background.w * 10, background.h * 10};
     std::vector<Drawable> drawablesBG;
+    std::vector<Drawable> drawablesObst;
     //TODO: Vectors for Drawables, specifically two
     //one vector for background objects and one for scrolling objects
     //player not needed in either vector
-    //TODO: Generate drawables with given velocities
-    drawablesBG.push_back(Drawable(leftSide, SDL_Rect({0, 0, 0, 0}), 0.05));
-    drawablesBG.push_back(Drawable(background, SDL_Rect({leftSide.w * 10, 0, 0, 0}), 0.025));
-    drawablesBG.push_back(Drawable(rightSide, SDL_Rect({((leftSide.w + background.w) * 10), 0, 0, 0}), 0.05));
-
+    
     // SDL Window
     SDL_Window *gWindow = NULL;
     // SDL Renderer
@@ -58,6 +59,20 @@ int main(int argc, char* argv[]){
     );
 
     gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
+
+    //TODO: Generate drawables with given velocities
+    // Left side
+    drawablesBG.push_back(Drawable(leftSide,
+				   SDL_Rect({0, 0, 0, 0}),
+				   0.05));
+    // Background
+    drawablesBG.push_back(Drawable(background,
+				   SDL_Rect({leftSide.w * 10, 0, 0, 0}),
+				   0.025));
+    // Right side
+    drawablesBG.push_back(Drawable(rightSide,
+				   SDL_Rect({((leftSide.w + background.w) * 10), 0, 0, 0}),
+				   0.05));
 
     //set renderer of drawables
     Drawable::setRenderer(gRenderer);
@@ -87,14 +102,39 @@ int main(int argc, char* argv[]){
 	tDelta = currentTime - lastTime;
 	lastTime = currentTime;
         //TODO:
-        // Update objects (player + map)
+        // Update BG
 	for (auto it = drawablesBG.begin(); it != drawablesBG.end(); it++) {
 	    it->updatePositionY(tDelta);
+	    // update to start
 	    if (it->getY() > 0.0) {
 	        it->setY(it->getY() - 60.0);
 	    }
 	}
+	// Add obstacles
+	obstDelta += tDelta;
+	if (obstDelta > obstFreq){
+	    std::cout << "Adding obst!\n";
+	    std::cout << "Number of obst: " << drawablesObst.size() << std::endl;
+	    // remeber gameRect.y == 0
+	    drawablesObst.push_back(Drawable(smallBox,
+					     SDL_Rect({gameRect.x, smallBox.h * -10, 0, 0}),
+					     0.05));
+	    //set renderer of drawables
+	    Drawable::setRenderer(gRenderer);
+	    //load sprite map
+	    Drawable::loadFromFile("src/sprite-sheet.png");
+	    obstDelta -= obstFreq;
+	}
+	// Update Obstacles
+	for (auto it = drawablesObst.begin(); it != drawablesObst.end(); it++) {
+	    it->updatePositionY(tDelta);
+	    // remove it out of game. note: gameRect.y == 0
+	    if (it->getY() > gameRect.h ) {
+	        drawablesObst.erase(it);
+	    }
+	}
     	// Update player
+	// TODO
     	// clear screen
     	SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
     	SDL_RenderClear( gRenderer );
@@ -104,6 +144,10 @@ int main(int argc, char* argv[]){
 	    it->render();
 	}
 	// obstacles
+	for (auto it = drawablesObst.begin(); it != drawablesObst.end(); it++) {
+	    it->render();
+	}
+
 	// player
     	// render display
     	SDL_RenderPresent( gRenderer );

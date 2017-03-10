@@ -31,8 +31,11 @@ public:
     void setY(float);
     float getX();
     float getY();
+    int getW();
+    int getH();
     
   
+    static int getScale();
     static int getImageWidth();
     static int getImageHeight();
     
