@@ -1,4 +1,5 @@
 #include "drawable.hpp"
+#include <iostream>
 
 //initialize static variables
 SDL_Renderer* Drawable::dRenderer = NULL;
@@ -14,6 +15,7 @@ Drawable::Drawable(SDL_Rect dSprite, SDL_Rect renderSpace, float velocity) {
     this->renderSpace.w = dSprite.w * Drawable::scale;
     this->renderSpace.h = dSprite.h * Drawable::scale;
     this->velocity = velocity;
+    this->baseVelocity = velocity;
     this->realX = renderSpace.x;
     this->realY = renderSpace.y;
 }
@@ -78,41 +80,76 @@ void Drawable::render() {
 }
 
 //updates drawables position
-void Drawable::updatePositionX(float tDelta) {
+void Drawable::updatePositionX(std::vector<Drawable> &obstacles, float tDelta) {
+    double tempX = realX;
     realX = realX + tDelta * velocity;
+	for (auto it = obstacles.begin(); it != obstacles.end(); it++) {
+        if (*(this) < *(it)) {
+            realX = tempX;
+        }
+    }
     renderSpace.x = (int) realX;
 }
 
-void Drawable::updatePositionX(float tDelta, float accel) {
-    realX = realX + tDelta * velocity * accel;
+void Drawable::updatePositionX(std::vector<Drawable> &obstacles, float tDelta, float accel) {
+    double tempX = realX;
+    velocity = std::abs(velocity) * accel;
+    realX = realX + tDelta * velocity;
+    for (auto it = obstacles.begin(); it != obstacles.end(); it++) {
+        if (*(this) < *(it)) {
+            realX = tempX;
+            velocity = baseVelocity;
+        }
+    }
     renderSpace.x = (int) realX;
 }
 
-void Drawable::updatePositionY(float tDelta) {
+bool Drawable::updatePositionY(Drawable &player, float tDelta) {
+    double tempY = realY;
     realY = realY + tDelta * velocity;
+    if (player < *(this) && player > *(this)) {
+        realY = tempY;
+        return true;
+    }
     renderSpace.y = (int) realY;
+    return false;
 }
 
-void Drawable::updatePositionY(float tDelta, float accel) {
-    realY = realY + tDelta * velocity * accel;
+bool Drawable::updatePositionY(Drawable &player, float tDelta, float accel) {
+    velocity = velocity * accel;
+    double tempY = realY;
+    realY = realY + tDelta * velocity;
+    if (player < *(this) && player > *(this)) {
+        realY = tempY;
+        return true;
+    }
     renderSpace.y = (int) realY;
+    return false;
 }
 
 //x collision detection
-bool Drawable::operator <(const Drawable &rhs) {
-    if (renderSpace.x < (rhs.renderSpace.x + rhs.renderSpace.w))
+bool Drawable::operator <(Drawable &rhs) {
+    float ldLeft = realX;
+    float ldRight = realX + renderSpace.w;
+    float rdLeft = rhs.realX;
+    float rdRight = rhs.realX + rhs.renderSpace.w;
+    if (ldLeft < rdRight  && ldLeft > rdLeft)
         return true;
-    else if ((renderSpace.x + renderSpace.w) > rhs.renderSpace.x)
+    else if (ldRight < rdRight  && ldRight > rdLeft)
         return true;
     else
         return false;
 }
 
 //y collision detection
-bool Drawable::operator >(const Drawable &rhs) {
-    if (renderSpace.y < (rhs.renderSpace.y + rhs.renderSpace.h))
+bool Drawable::operator >(Drawable &rhs) {
+    float ldTop = realY;
+    float ldBot = realY + renderSpace.h;
+    float rdTop = rhs.realY;
+    float rdBot = rhs.realY + rhs.renderSpace.h;
+    if (ldTop < rdBot && ldTop > rdTop)
         return true;
-    else if ((renderSpace.y + renderSpace.h) > rhs.renderSpace.y)
+    else if (ldBot < rdBot && ldBot > rdTop)
         return true;
     else
         return false;
@@ -123,6 +160,12 @@ int Drawable::getImageWidth() { return imageWidth; }
 
 //spritemap height
 int Drawable::getImageHeight() { return imageHeight; }
+
+void Drawable::setSprite(SDL_Rect newSprite) {
+    this->dSprite = newSprite;
+}
+
+void Drawable::setVel(float v) { velocity = v; }
 
 void Drawable::setX(float x){
     renderSpace.x = x; 

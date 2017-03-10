@@ -2,6 +2,8 @@
 #define DRAWABLE_HPP_
 
 #include <string>
+#include <vector>
+#include <cstdlib>
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
 
@@ -18,15 +20,17 @@ public:
 
     void render();
 
-    void updatePositionX(float tDelta);
-    void updatePositionX(float tDelta, float accel);
+    void updatePositionX(std::vector<Drawable>&, float tDelta);
+    void updatePositionX(std::vector<Drawable>&, float tDelta, float accel);
    
-    void updatePositionY(float tDelta);
-    void updatePositionY(float tDelta, float accel);
+    bool updatePositionY(Drawable &player, float tDelta);
+    bool updatePositionY(Drawable &player, float tDelta, float accel);
 
-    bool operator <(const Drawable &rhs); //used for x collision detection
-    bool operator >(const Drawable &rhs); //used for y collision detection
+    bool operator <(Drawable &rhs); //used for x collision detection
+    bool operator >(Drawable &rhs); //used for y collision detection
 
+    void setSprite(SDL_Rect newSprite);
+    void setVel(float);
     void setX(float);
     void setY(float);
     float getX();
@@ -47,7 +51,7 @@ private:
 
     bool solid;
 
-    float velocity, realX, realY;
+    double velocity, baseVelocity, realX, realY;
     
     SDL_Rect dSprite; //contains sprite x, y coords on spritemap, w, h
     SDL_Rect renderSpace; //contains frame render coords
