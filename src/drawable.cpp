@@ -98,7 +98,8 @@ void Drawable::updatePositionX(std::vector<Drawable> &background, std::vector<Dr
 void Drawable::updatePositionX(std::vector<Drawable> &background, std::vector<Drawable> &obstacles, float tDelta, float accel) {
     double tempX = realX;
     velocity = std::abs(velocity) * accel;
-    realX = realX + tDelta * velocity;
+    realX = (int) (realX + tDelta * velocity);
+
     for (auto it = background.begin(); it != background.end(); it++) {
         if (*(this) < *(it)) {
             realX = tempX;
@@ -157,9 +158,11 @@ bool Drawable::operator >(Drawable &rhs) {
     float ldBot = realY + renderSpace.h;
     float rdTop = rhs.realY;
     float rdBot = rhs.realY + rhs.renderSpace.h;
-    if (ldTop < rdBot && ldTop > rdTop)
+    if (ldTop <= rdBot && ldTop >= rdTop)
         return true;
-    else if (ldBot < rdBot && ldBot > rdTop)
+    else if (ldBot <= rdBot && ldBot >= rdTop)
+        return true;
+    else if (ldTop <= rdTop && ldBot >= rdBot)
         return true;
     else
         return false;
