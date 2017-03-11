@@ -144,9 +144,9 @@ bool Drawable::operator <(Drawable &rhs) {
     float ldRight = realX + renderSpace.w;
     float rdLeft = rhs.realX;
     float rdRight = rhs.realX + rhs.renderSpace.w;
-    if (ldLeft < rdRight  && ldLeft > rdLeft)
+    if (ldLeft <= rdRight  && ldLeft >= rdLeft)
         return true;
-    else if (ldRight < rdRight  && ldRight > rdLeft)
+    else if (ldRight <= rdRight  && ldRight >= rdLeft)
         return true;
     else
         return false;
