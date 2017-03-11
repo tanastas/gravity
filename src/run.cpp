@@ -16,11 +16,13 @@
 
 
 int main(int argc, char* argv[]){
-    //gravity constant
-    float grav = 9.8;
+    //scale for screen dimensions
+    int scale = 10;
     // obstacle vars
     int obstFreq = 4000;
     int obstDelta = 0;
+    //gravity constant
+    float grav = -1.1;
     //Rects for our seven sprites
     SDL_Rect leftSide = {2, 2, 4, 97};
     SDL_Rect rightSide = {43, 2, 4, 97};
@@ -32,10 +34,9 @@ int main(int argc, char* argv[]){
     SDL_Rect gameRect = {leftSide.w * 10, 0, background.w * 10, background.h * 10};
     std::vector<Drawable> drawablesBG;
     std::vector<Drawable> drawablesObst;
-    //TODO: Vectors for Drawables, specifically two
-    //one vector for background objects and one for scrolling objects
-    //player not needed in either vector
-    
+
+    Drawable player = Drawable(playerGLeft, SDL_Rect({leftSide.w * scale + 1, 400, 0, 0}), 0.01);
+
     // SDL Window
     SDL_Window *gWindow = NULL;
     // SDL Renderer
@@ -60,15 +61,14 @@ int main(int argc, char* argv[]){
 
     gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
 
-    //TODO: Generate drawables with given velocities
     // Left side
     drawablesBG.push_back(Drawable(leftSide,
 				   SDL_Rect({0, 0, 0, 0}),
 				   0.05));
     // Background
-    drawablesBG.push_back(Drawable(background,
-				   SDL_Rect({leftSide.w * 10, 0, 0, 0}),
-				   0.025));
+    //drawablesBG.push_back(Drawable(background,
+	//			   SDL_Rect({leftSide.w * 10, 0, 0, 0}),
+	//			   0.025));
     // Right side
     drawablesBG.push_back(Drawable(rightSide,
 				   SDL_Rect({((leftSide.w + background.w) * 10), 0, 0, 0}),
@@ -89,13 +89,17 @@ int main(int argc, char* argv[]){
     while(!done){
     	// quit
     	while(SDL_PollEvent(&event)){
-	    if(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE){
-	      done = true;
+	        if(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE){
+                done = true;
     	    }
             else if( event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE){ 
                 //if spacebar is pressed
-                // swap gravity
+                // swap gravity and swap player direction
                 grav = grav * (-1);
+                if (grav > 0)
+                    player.setSprite(playerGRight);
+                else
+                    player.setSprite(playerGLeft);
             }
         }
         currentTime = SDL_GetTicks();
@@ -104,7 +108,7 @@ int main(int argc, char* argv[]){
         //TODO:
         // Update BG
 	for (auto it = drawablesBG.begin(); it != drawablesBG.end(); it++) {
-	    it->updatePositionY(tDelta);
+	    it->updatePositionY(player, tDelta);
 	    // update to start
 	    if (it->getY() > 0.0) {
 	        it->setY(it->getY() - 60.0);
@@ -127,31 +131,54 @@ int main(int argc, char* argv[]){
 	}
 	// Update Obstacles
 	for (auto it = drawablesObst.begin(); it != drawablesObst.end(); it++) {
-	    it->updatePositionY(tDelta);
+	    it->updatePositionY(player, tDelta);
 	    // remove it out of game. note: gameRect.y == 0
 	    if (it->getY() > gameRect.h ) {
 	        drawablesObst.erase(it);
 	    }
 	}
     	// Update player
-	// TODO
-    	// clear screen
-    	SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
-    	SDL_RenderClear( gRenderer );
-	// Render objects
-	// BG
-	for (auto it = drawablesBG.begin(); it != drawablesBG.end(); it++) {
-	    it->render();
-	}
-	// obstacles
-	for (auto it = drawablesObst.begin(); it != drawablesObst.end(); it++) {
-	    it->render();
-	}
-
-	// player
-    	// render display
-    	SDL_RenderPresent( gRenderer );
-    }
+        player.updatePositionX(drawablesBG, drawablesObst, tDelta, grav);
+        //Update Background
+	    for (auto it = drawablesBG.begin(); it != drawablesBG.end(); it++) {
+	        it->updatePositionY(player, tDelta);
+	        if (it->getY() > 0.0) {
+	            it->setY(it->getY() - 60.0);
+	        }
+	    }
+        // Add obstacles
+        obstDelta += tDelta;
+        if (obstDelta > obstFreq){
+            std::cout << "Adding obst!\n";
+            // remeber gameRect.y == 0
+            drawablesObst.push_back(Drawable(smallBox, SDL_Rect({gameRect.x, smallBox.h * scale * (-1), 0, 0}), 0.05));
+            obstDelta -= obstFreq;
+        }
+        // Update Obstacles
+        for (auto it = drawablesObst.begin(); it != drawablesObst.end(); it++) {
+            it->updatePositionY(player, tDelta);
+            // remove it out of game. note: gameRect.y == 0
+            if (it->getY() > gameRect.h ) {
+                drawablesObst.erase(it);
+            }
+        }
+        // clear screen
+        SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+        SDL_RenderClear( gRenderer );
+        // Render objects
+        // BG
+        for (auto it = drawablesBG.begin(); it != drawablesBG.end(); it++) {
+            it->render();
+        }
+        // obstacles
+        for (auto it = drawablesObst.begin(); it != drawablesObst.end(); it++) {
+            it->render();
+        }
+        // player
+        player.render();
+        // render display
+        SDL_RenderPresent( gRenderer );
+    }//end top while loop
 
     // Close and destroy the window
     SDL_DestroyWindow(gWindow);
