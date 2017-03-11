@@ -22,7 +22,6 @@ Drawable::Drawable(SDL_Rect dSprite, SDL_Rect renderSpace, float velocity) {
 
 //destructor
 Drawable::~Drawable() {
-    free();
 }
 
 //sets static renderer
@@ -80,9 +79,14 @@ void Drawable::render() {
 }
 
 //updates drawables position
-void Drawable::updatePositionX(std::vector<Drawable> &obstacles, float tDelta) {
+void Drawable::updatePositionX(std::vector<Drawable> &background, std::vector<Drawable> &obstacles, float tDelta) {
     double tempX = realX;
     realX = realX + tDelta * velocity;
+    for (auto it = background.begin(); it != background.end(); it++) {
+        if (*(this) < *(it)) {
+            realX = tempX;
+        }
+    }
 	for (auto it = obstacles.begin(); it != obstacles.end(); it++) {
         if (*(this) < *(it)) {
             realX = tempX;
@@ -91,12 +95,18 @@ void Drawable::updatePositionX(std::vector<Drawable> &obstacles, float tDelta) {
     renderSpace.x = (int) realX;
 }
 
-void Drawable::updatePositionX(std::vector<Drawable> &obstacles, float tDelta, float accel) {
+void Drawable::updatePositionX(std::vector<Drawable> &background, std::vector<Drawable> &obstacles, float tDelta, float accel) {
     double tempX = realX;
     velocity = std::abs(velocity) * accel;
     realX = realX + tDelta * velocity;
-    for (auto it = obstacles.begin(); it != obstacles.end(); it++) {
+    for (auto it = background.begin(); it != background.end(); it++) {
         if (*(this) < *(it)) {
+            realX = tempX;
+            velocity = baseVelocity;
+        }
+    }
+    for (auto it = obstacles.begin(); it != obstacles.end(); it++) {
+        if (*(this) < *(it) && *(this) > *(it)) {
             realX = tempX;
             velocity = baseVelocity;
         }

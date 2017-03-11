@@ -106,7 +106,7 @@ int main(int argc, char* argv[]){
 	    tDelta = currentTime - lastTime;
 	    lastTime = currentTime;
     	// Update player
-        player.updatePositionX(drawablesBG, tDelta, grav);
+        player.updatePositionX(drawablesBG, drawablesObst, tDelta, grav);
         //Update Background
 	    for (auto it = drawablesBG.begin(); it != drawablesBG.end(); it++) {
 	        it->updatePositionY(player, tDelta);
@@ -114,16 +114,14 @@ int main(int argc, char* argv[]){
 	            it->setY(it->getY() - 60.0);
 	        }
 	    }
-        /*
         // Add obstacles
         obstDelta += tDelta;
         if (obstDelta > obstFreq){
             std::cout << "Adding obst!\n";
             // remeber gameRect.y == 0
-            drawablesObst.push_back(Drawable(smallBox, SDL_Rect({gameRect.x, 0, 0, 0}), 0.05));
+            drawablesObst.push_back(Drawable(smallBox, SDL_Rect({gameRect.x, smallBox.h * scale * (-1), 0, 0}), 0.05));
             obstDelta -= obstFreq;
         }
-        */
         // Update Obstacles
         for (auto it = drawablesObst.begin(); it != drawablesObst.end(); it++) {
             it->updatePositionY(player, tDelta);

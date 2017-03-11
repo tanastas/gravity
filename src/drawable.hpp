@@ -20,8 +20,8 @@ public:
 
     void render();
 
-    void updatePositionX(std::vector<Drawable>&, float tDelta);
-    void updatePositionX(std::vector<Drawable>&, float tDelta, float accel);
+    void updatePositionX(std::vector<Drawable>&, std::vector<Drawable>&, float tDelta);
+    void updatePositionX(std::vector<Drawable>&, std::vector<Drawable>&, float tDelta, float accel);
    
     bool updatePositionY(Drawable &player, float tDelta);
     bool updatePositionY(Drawable &player, float tDelta, float accel);
