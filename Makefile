@@ -28,5 +28,5 @@ gravity-mac: $(MOBJS)
 		$(CXX) $(MAC_LIBS) -o bin/$@ $(MOBJS)
 
 clean:
-	$(RM) $(OBJS:%.o=bin/%.o) $(MOBJS) bin/gravity-mac
+	$(RM) $(OBJS:%.o=bin/%.o) $(MOBJS) bin/gravity-mac bin/gravity
 

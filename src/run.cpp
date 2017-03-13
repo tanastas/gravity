@@ -19,10 +19,10 @@ int main(int argc, char* argv[]){
     //scale for screen dimensions
     int scale = 10;
     // obstacle vars
-    int obstFreq = 4000;
+    int obstFreq = 8000;
     int obstDelta = 0;
     //gravity constant
-    float grav = -1.1;
+    float grav = -1.025;
     //Rects for our seven sprites
     SDL_Rect leftSide = {2, 2, 4, 97};
     SDL_Rect rightSide = {43, 2, 4, 97};
@@ -35,7 +35,7 @@ int main(int argc, char* argv[]){
     std::vector<Drawable> drawablesBG;
     std::vector<Drawable> drawablesObst;
 
-    Drawable player = Drawable(playerGLeft, SDL_Rect({leftSide.w * scale + 1, 400, 0, 0}), 0.01);
+    Drawable player = Drawable(playerGLeft, SDL_Rect({leftSide.w * scale + 1, 400, 0, 0}), 0.05);
 
     // SDL Window
     SDL_Window *gWindow = NULL;
@@ -131,7 +131,12 @@ int main(int argc, char* argv[]){
 	}
 	// Update Obstacles
 	for (auto it = drawablesObst.begin(); it != drawablesObst.end(); it++) {
-	    it->updatePositionY(player, tDelta);
+	    bool collision = it->updatePositionY(player, tDelta);
+        if (collision) {
+            std::cout << "Game Over!: " << currentTime << std::endl;
+            done = true;
+            break;
+        }
 	    // remove it out of game. note: gameRect.y == 0
 	    if (it->getY() > gameRect.h ) {
 	        drawablesObst.erase(it);
