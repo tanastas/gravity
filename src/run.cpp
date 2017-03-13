@@ -37,6 +37,8 @@ int main(int argc, char* argv[]){
 
     Drawable player = Drawable(playerGLeft, SDL_Rect({leftSide.w * scale + 1, 400, 0, 0}), 0.05);
 
+    Drawable BG = Drawable(background, SDL_Rect({leftSide.w * scale, 0, 0, 0}), 0.025);
+
     // SDL Window
     SDL_Window *gWindow = NULL;
     // SDL Renderer
@@ -105,11 +107,14 @@ int main(int argc, char* argv[]){
         currentTime = SDL_GetTicks();
 	tDelta = currentTime - lastTime;
 	lastTime = currentTime;
-        //TODO:
         // Update BG
 	for (auto it = drawablesBG.begin(); it != drawablesBG.end(); it++) {
+        BG.updatePositionY(tDelta);
 	    it->updatePositionY(player, tDelta);
 	    // update to start
+        if (BG.getY() > 0.0) {
+            BG.setY(BG.getY() - 60);
+        }
 	    if (it->getY() > 0.0) {
 	        it->setY(it->getY() - 60.0);
 	    }
@@ -172,6 +177,7 @@ int main(int argc, char* argv[]){
         SDL_RenderClear( gRenderer );
         // Render objects
         // BG
+        BG.render();
         for (auto it = drawablesBG.begin(); it != drawablesBG.end(); it++) {
             it->render();
         }

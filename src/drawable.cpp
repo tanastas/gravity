@@ -115,6 +115,11 @@ void Drawable::updatePositionX(std::vector<Drawable> &background, std::vector<Dr
     renderSpace.x = (int) realX;
 }
 
+void Drawable::updatePositionY(float tDelta) {
+    realY = realY + tDelta * velocity;
+    renderSpace.y = (int) realY;
+}
+
 bool Drawable::updatePositionY(Drawable &player, float tDelta) {
     double tempY = realY;
     realY = realY + tDelta * velocity;

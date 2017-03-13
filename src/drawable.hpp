@@ -23,6 +23,7 @@ public:
     void updatePositionX(std::vector<Drawable>&, std::vector<Drawable>&, float tDelta);
     void updatePositionX(std::vector<Drawable>&, std::vector<Drawable>&, float tDelta, float accel);
    
+    void updatePositionY(float tDelta);
     bool updatePositionY(Drawable &player, float tDelta);
     bool updatePositionY(Drawable &player, float tDelta, float accel);
 
