@@ -67,11 +67,6 @@ int main(int argc, char* argv[]){
     drawablesBG.push_back(Drawable(leftSide,
 				   SDL_Rect({0, 0, 0, 0}),
 				   0.05));
-    // Background
-    //drawablesBG.push_back(Drawable(background,
-	//			   SDL_Rect({leftSide.w * 10, 0, 0, 0}),
-	//			   0.025));
-    // Right side
     drawablesBG.push_back(Drawable(rightSide,
 				   SDL_Rect({((leftSide.w + background.w) * 10), 0, 0, 0}),
 				   0.05));
@@ -128,10 +123,6 @@ int main(int argc, char* argv[]){
 	    drawablesObst.push_back(Drawable(smallBox,
 					     SDL_Rect({gameRect.x, smallBox.h * -10, 0, 0}),
 					     0.05));
-	    //set renderer of drawables
-	    Drawable::setRenderer(gRenderer);
-	    //load sprite map
-	    Drawable::loadFromFile("src/sprite-sheet.png");
 	    obstDelta -= obstFreq;
 	}
 	// Update Obstacles
