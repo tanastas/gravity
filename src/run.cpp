@@ -16,7 +16,7 @@ int main(int argc, char* argv[]){
     //scale for screen dimensions
     int scale = 10;
     // obstacle vars
-    int obstFreq = 800;
+    int obstFreq = 8000;
     int obstDelta = 0;
     //gravity constant
     float grav = -1.025;
@@ -121,7 +121,8 @@ int main(int argc, char* argv[]){
 	}
 	// Update Obstacles
 	for (auto it = drawablesObst.begin(); it != drawablesObst.end(); it++) {
-	    bool collision = it->updatePositionY(player, tDelta);
+	    bool collision = false;
+        collision = it->updatePositionY(player, tDelta);
 	    if (collision) {
 		std::cout << "Game Over!: " << currentTime << std::endl;
 		done = true;
@@ -130,6 +131,7 @@ int main(int argc, char* argv[]){
 	    // remove it out of game. note: gameRect.y == 0
 	    if (it->getY() > gameRect.h ) {
 	        drawablesObst.erase(it);
+            it--;
 	    }
 	}
     	// Update player
