@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <cstdlib>
+#include <cmath>
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
 

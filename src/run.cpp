@@ -1,25 +1,22 @@
 //============================================================================
-// Name        : SDL2Test.cpp
-// Author      : Tristan Anastas
+// Name        : run.cpp
+// Author      : 
 // Version     :
-// Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
 //============================================================================
-// Example program:
-// Using SDL2 to create an application window
 
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <vector>
 
 #include "drawable.hpp"
+#include "ai.hpp"
 
 
 int main(int argc, char* argv[]){
     //scale for screen dimensions
     int scale = 10;
     // obstacle vars
-    int obstFreq = 8000;
+    int obstFreq = 800;
     int obstDelta = 0;
     //gravity constant
     float grav = -1.025;
@@ -37,7 +34,7 @@ int main(int argc, char* argv[]){
 
     Drawable player = Drawable(playerGLeft, SDL_Rect({leftSide.w * scale + 1, 400, 0, 0}), 0.05);
 
-    Drawable BG = Drawable(background, SDL_Rect({leftSide.w * scale, 0, 0, 0}), 0.025);
+    Drawable BG = Drawable(background, SDL_Rect({leftSide.w * scale, 0, 0, 0}), 0.075);
 
     // SDL Window
     SDL_Window *gWindow = NULL;
@@ -45,6 +42,8 @@ int main(int argc, char* argv[]){
     SDL_Renderer *gRenderer = NULL;
     // Initialise SDL
     SDL_Init(SDL_INIT_VIDEO);
+    // AI
+    AI ai;
     // Set up the quit boolean
     bool done = false;
     // Set up the event
@@ -66,15 +65,11 @@ int main(int argc, char* argv[]){
     // Left side
     drawablesBG.push_back(Drawable(leftSide,
 				   SDL_Rect({0, 0, 0, 0}),
-				   0.05));
-    // Background
-    //drawablesBG.push_back(Drawable(background,
-	//			   SDL_Rect({leftSide.w * 10, 0, 0, 0}),
-	//			   0.025));
+				   0.15));
     // Right side
     drawablesBG.push_back(Drawable(rightSide,
 				   SDL_Rect({((leftSide.w + background.w) * 10), 0, 0, 0}),
-				   0.05));
+				   0.15));
 
     //set renderer of drawables
     Drawable::setRenderer(gRenderer);
@@ -108,40 +103,30 @@ int main(int argc, char* argv[]){
 	tDelta = currentTime - lastTime;
 	lastTime = currentTime;
         // Update BG
-	for (auto it = drawablesBG.begin(); it != drawablesBG.end(); it++) {
         BG.updatePositionY(tDelta);
-	    it->updatePositionY(player, tDelta);
-	    // update to start
         if (BG.getY() > 0.0) {
             BG.setY(BG.getY() - 60);
         }
-	    if (it->getY() > 0.0) {
-	        it->setY(it->getY() - 60.0);
-	    }
-	}
 	// Add obstacles
 	obstDelta += tDelta;
 	if (obstDelta > obstFreq){
 	    std::cout << "Adding obst!\n";
 	    std::cout << "Number of obst: " << drawablesObst.size() << std::endl;
 	    // remeber gameRect.y == 0
-	    drawablesObst.push_back(Drawable(smallBox,
-					     SDL_Rect({gameRect.x, smallBox.h * -10, 0, 0}),
-					     0.05));
-	    //set renderer of drawables
-	    Drawable::setRenderer(gRenderer);
-	    //load sprite map
-	    Drawable::loadFromFile("src/sprite-sheet.png");
+	    // Use AI
+	    // call addObjects on &drawablesObst
+	    // return int is added to obstDela
+	    ai.addObjects(currentTime, drawablesObst);
 	    obstDelta -= obstFreq;
 	}
 	// Update Obstacles
 	for (auto it = drawablesObst.begin(); it != drawablesObst.end(); it++) {
 	    bool collision = it->updatePositionY(player, tDelta);
-        if (collision) {
-            std::cout << "Game Over!: " << currentTime << std::endl;
-            done = true;
-            break;
-        }
+	    if (collision) {
+		std::cout << "Game Over!: " << currentTime << std::endl;
+		done = true;
+		break;
+	    }
 	    // remove it out of game. note: gameRect.y == 0
 	    if (it->getY() > gameRect.h ) {
 	        drawablesObst.erase(it);
@@ -150,28 +135,12 @@ int main(int argc, char* argv[]){
     	// Update player
         player.updatePositionX(drawablesBG, drawablesObst, tDelta, grav);
         //Update Background
-	    for (auto it = drawablesBG.begin(); it != drawablesBG.end(); it++) {
-	        it->updatePositionY(player, tDelta);
-	        if (it->getY() > 0.0) {
-	            it->setY(it->getY() - 60.0);
-	        }
+	for (auto it = drawablesBG.begin(); it != drawablesBG.end(); it++) {
+	    it->updatePositionY(player, tDelta);
+	    if (it->getY() > 0.0) {
+		it->setY(it->getY() - 60.0);
 	    }
-        // Add obstacles
-        obstDelta += tDelta;
-        if (obstDelta > obstFreq){
-            std::cout << "Adding obst!\n";
-            // remeber gameRect.y == 0
-            drawablesObst.push_back(Drawable(smallBox, SDL_Rect({gameRect.x, smallBox.h * scale * (-1), 0, 0}), 0.05));
-            obstDelta -= obstFreq;
-        }
-        // Update Obstacles
-        for (auto it = drawablesObst.begin(); it != drawablesObst.end(); it++) {
-            it->updatePositionY(player, tDelta);
-            // remove it out of game. note: gameRect.y == 0
-            if (it->getY() > gameRect.h ) {
-                drawablesObst.erase(it);
-            }
-        }
+	}
         // clear screen
         SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
         SDL_RenderClear( gRenderer );
