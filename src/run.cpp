@@ -32,7 +32,8 @@ int main(int argc, char* argv[]){
     std::vector<Drawable> drawablesBG;
     std::vector<Drawable> drawablesObst;
 
-    Drawable player = Drawable(playerGLeft, SDL_Rect({leftSide.w * scale + 1, 400, 0, 0}), 0.05);
+    float startingVelocity = 0.05;
+    Drawable player = Drawable(playerGLeft, SDL_Rect({leftSide.w * scale + 1, 400, 0, 0}), startingVelocity);
 
     Drawable BG = Drawable(background, SDL_Rect({leftSide.w * scale, 0, 0, 0}), 0.075);
 
@@ -92,11 +93,16 @@ int main(int argc, char* argv[]){
             else if( event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE){ 
                 //if spacebar is pressed
                 // swap gravity and swap player direction
+                
                 grav = grav * (-1);
-                if (grav > 0)
+                if (grav > 0) {
+                    player.setVel(startingVelocity);
                     player.setSprite(playerGRight);
-                else
+                }
+                else {
+                    player.setVel(startingVelocity);
                     player.setSprite(playerGLeft);
+                }
             }
         }
         currentTime = SDL_GetTicks();
