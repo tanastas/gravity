@@ -5,6 +5,8 @@
 #include <vector>
 #include <cstdlib>
 #include <cmath>
+#include <iostream>
+#include "config.cpp"
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
 

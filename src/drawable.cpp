@@ -1,19 +1,17 @@
 #include "drawable.hpp"
-#include <iostream>
 
 //initialize static variables
 SDL_Renderer* Drawable::dRenderer = NULL;
 SDL_Texture* Drawable::dTexture = NULL;
 int Drawable::imageWidth = 0;
 int Drawable::imageHeight = 0;
-int Drawable::scale = 10;
 
 //constructor
 Drawable::Drawable(SDL_Rect dSprite, SDL_Rect renderSpace, float velocity) { 
     this->dSprite = dSprite;
     this->renderSpace = renderSpace;
-    this->renderSpace.w = dSprite.w * Drawable::scale;
-    this->renderSpace.h = dSprite.h * Drawable::scale;
+    this->renderSpace.w = dSprite.w * config::scale;
+    this->renderSpace.h = dSprite.h * config::scale;
     this->velocity = velocity;
     this->baseVelocity = velocity;
     this->realX = renderSpace.x;
@@ -50,8 +48,7 @@ bool Drawable::loadFromFile(std::string path) {
 			imageHeight = loadedImage->h;
 		}
 
-    SDL_FreeSurface(loadedImage);
-
+	SDL_FreeSurface(loadedImage);
     }
     //sets the actual static member
     dTexture = finalTexture;
@@ -212,5 +209,5 @@ int Drawable::getH(){
 }
 
 int Drawable::getScale() {
-    return scale;
+    return config::scale;
 }

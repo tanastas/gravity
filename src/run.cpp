@@ -10,40 +10,33 @@
 
 #include "drawable.hpp"
 #include "ai.hpp"
+#include "config.cpp"
 
 
 int main(int argc, char* argv[]){
-    //scale for screen dimensions
-    int scale = 10;
-    // obstacle vars
-    int obstFreq = 2000;
+    // time since last section addition
     int obstDelta = 0;
-    //gravity constant
-    float grav = -1.025;
-    //Rects for our seven sprites
-    SDL_Rect leftSide = {2, 2, 4, 97};
-    SDL_Rect rightSide = {43, 2, 4, 97};
-    SDL_Rect background = {6, 2, 37, 97};
-    SDL_Rect playerGLeft = {49, 15, 7, 13};
-    SDL_Rect playerGRight = {57, 15, 7, 13};
-    SDL_Rect longBox = {49, 2, 24, 10};
-    SDL_Rect smallBox = {69, 18, 10, 10};
-    SDL_Rect start = {49, 47, 33, 26};
-    SDL_Rect gameRect = {leftSide.w * 10, 0, background.w * 10, background.h * 10};
+    // direction of gravity
+    float grav = -1.0;
+    // Start time
+    int startTime;
+    // Sides of the bg
     std::vector<Drawable> drawablesBG;
+    // Obstacles to avoid
     std::vector<Drawable> drawablesObst;
 
-    float startingVelocity = 0.05;
-    Drawable player = Drawable(playerGLeft,
-			       SDL_Rect({leftSide.w * scale + 1, 400, 0, 0}),
-			       startingVelocity);
-    Drawable startScreen = Drawable(start,
-				    SDL_Rect({(gameRect.w / 2) - (start.w / 2 * 10) + gameRect.x, 10, 0, 0}),
+    // Player drawable
+    Drawable player = Drawable(config::playerGLeft,
+			       SDL_Rect({config::leftSide.w * config::scale + 1, 500, 0, 0}),
+			       config::fgSpeed);
+    // Start screen drawable
+    Drawable startScreen = Drawable(config::start,
+				    SDL_Rect({(config::gameRect.w / 2) - ((config::start.w / 2 )* config::scale) + config::gameRect.x, 10, 0, 0}),
 				    0);
-    Drawable BG = Drawable(background,
-			   SDL_Rect({leftSide.w * scale, 0, 0, 0}),
-			   0.075);
-
+    // Background drawable
+    Drawable BG = Drawable(config::background,
+			   SDL_Rect({config::leftSide.w * config::scale, 0, 0, 0}),
+			   config::bgSpeed);
     // SDL Window
     SDL_Window *gWindow = NULL;
     // SDL Renderer
@@ -65,21 +58,21 @@ int main(int argc, char* argv[]){
         "Gravity - The Game",              // window title
         SDL_WINDOWPOS_UNDEFINED,           // initial x position
         SDL_WINDOWPOS_UNDEFINED,           // initial y position
-        450,                               // width, in pixels
-        800,                               // height, in pixels
+        config::width,                     // width, in pixels
+        config::height,                    // height, in pixels
         SDL_WINDOW_OPENGL                  // flags - see below
     );
 
-    gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
+    gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
 
     // Left side
-    drawablesBG.push_back(Drawable(leftSide,
+    drawablesBG.push_back(Drawable(config::leftSide,
 				   SDL_Rect({0, 0, 0, 0}),
-				   0.15));
+				   config::fgSpeed));
     // Right side
-    drawablesBG.push_back(Drawable(rightSide,
-				   SDL_Rect({((leftSide.w + background.w) * 10), 0, 0, 0}),
-				   0.15));
+    drawablesBG.push_back(Drawable(config::rightSide,
+				   SDL_Rect({((config::leftSide.w + config::background.w) * config::scale), 0, 0, 0}),
+				   config::fgSpeed));
 
     //set renderer of drawables
     Drawable::setRenderer(gRenderer);
@@ -93,7 +86,8 @@ int main(int argc, char* argv[]){
         return 1;
     }
     lastTime = SDL_GetTicks();
-    while(!done){
+    startTime = lastTime;
+    while (!done){
         // Start sequence
         currentTime = SDL_GetTicks();
 	tDelta = currentTime - lastTime;
@@ -103,13 +97,13 @@ int main(int argc, char* argv[]){
 		for (auto it = drawablesBG.begin(); it != drawablesBG.end(); it++) {
 		    it->updatePositionY(player, tDelta);
 		    if (it->getY() > 0.0) {
-			it->setY(it->getY() - 60.0);
+		        it->setY(it->getY() - config::bgOffset);
 		    }
 		}
 		// Update BG
 		BG.updatePositionY(tDelta);
 		if (BG.getY() > 0.0) {
-		    BG.setY(BG.getY() - 60);
+		    BG.setY(BG.getY() - config::bgOffset);
 		}
 		BG.render();
 		for (auto it = drawablesBG.begin(); it != drawablesBG.end(); it++) {
@@ -122,7 +116,7 @@ int main(int argc, char* argv[]){
 		player.render();
 		// Start screen
 		startScreen.render();
-		while(SDL_PollEvent(&event)){
+		while (SDL_PollEvent(&event)){
 		    if(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE){
 			done = true;
 		    }
@@ -130,72 +124,69 @@ int main(int argc, char* argv[]){
 			bStart = false;
 		    }
 		}
-		SDL_RenderPresent( gRenderer );
+		SDL_RenderPresent(gRenderer);
 		continue;
 	}
     	// quit
-    	while(SDL_PollEvent(&event)){
-	        if(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE){
+    	while (SDL_PollEvent(&event)){
+	    if(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE){
                 done = true;
     	    }
-            else if( event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE){ 
+            else if ( event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE){ 
                 //if spacebar is pressed
                 // swap gravity and swap player direction
                 
                 grav = grav * (-1);
                 if (grav > 0) {
-                    player.setVel(startingVelocity);
-                    player.setSprite(playerGRight);
+		    player.setVel(config::fgSpeed);
+                    player.setSprite(config::playerGRight);
                 }
                 else {
-                    player.setVel(startingVelocity);
-                    player.setSprite(playerGLeft);
+		    player.setVel(config::fgSpeed);
+                    player.setSprite(config::playerGLeft);
                 }
             }
         }
         // Update BG
         BG.updatePositionY(tDelta);
         if (BG.getY() > 0.0) {
-            BG.setY(BG.getY() - 60);
+	    BG.setY(BG.getY() - config::bgOffset);
         }
 	// Add obstacles
 	obstDelta += tDelta;
-	if (obstDelta > obstFreq){
-	    std::cout << "Adding obst!\n";
-	    std::cout << "Number of obst: " << drawablesObst.size() << std::endl;
-	    // remeber gameRect.y == 0
+	if (obstDelta > config::obstFreq){
 	    // Use AI
 	    // return int is added to obstDela
 	    obstDelta += ai.addObjects(currentTime, drawablesObst);
-	    obstDelta -= obstFreq;
+	    obstDelta -= config::obstFreq;
 	}
 	// Update Obstacles
 	for (auto it = drawablesObst.begin(); it != drawablesObst.end(); it++) {
 	    bool collision = false;
-        collision = it->updatePositionY(player, tDelta);
+            collision = it->updatePositionY(player, tDelta);
 	    if (collision) {
-		std::cout << "Game Over!: " << currentTime << std::endl;
+		std::cout << "Game Over!: " << currentTime - startTime << std::endl;
 		done = true;
 		break;
 	    }
 	    // remove it out of game. note: gameRect.y == 0
-	    if (it->getY() > gameRect.h ) {
+	    if (it->getY() > config::gameRect.h) {
 	        drawablesObst.erase(it);
 		it--;
 	    }
 	}
     	// Update player
-        player.updatePositionX(drawablesBG, drawablesObst, tDelta, grav);
+        player.updatePositionX(drawablesBG, drawablesObst, tDelta, grav * config::gravity);
         //Update Background
 	for (auto it = drawablesBG.begin(); it != drawablesBG.end(); it++) {
 	    it->updatePositionY(player, tDelta);
 	    if (it->getY() > 0.0) {
-		it->setY(it->getY() - 60.0);
+	        it->setY(it->getY() - config::bgOffset);
 	    }
 	}
         // clear screen
-        SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
-        SDL_RenderClear( gRenderer );
+        SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+        SDL_RenderClear(gRenderer);
         // Render objects
         // BG
         BG.render();
@@ -209,7 +200,7 @@ int main(int argc, char* argv[]){
         // player
         player.render();
         // render display
-        SDL_RenderPresent( gRenderer );
+        SDL_RenderPresent(gRenderer);
     }//end top while loop
 
     // Close and destroy the window

@@ -4,6 +4,7 @@
 
 
 #include "drawable.hpp"
+#include "config.cpp"
 #include <SDL2/SDL.h>
 #include <vector>
 #include <iostream>
@@ -19,14 +20,8 @@ public:
     ~AI();
     // returns time for section adds vars to vector;
     int addObjects(int, std::vector<Drawable>&);
-    // box for small box sprite
-    static SDL_Rect smallBox;
-    static SDL_Rect gameRect;
-  
+     
 private:
-    // Static pauses
-    static int fullPause;
-    static float objSpeed;
     // vector of drawable sections.
     std::vector<void(*)(std::vector<Drawable>&)> addFunctions;
     // returns index given a score.

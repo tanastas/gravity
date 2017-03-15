@@ -1,12 +1,6 @@
 #include "ai.hpp"
 
 
-// Small box sprite location
-SDL_Rect AI::smallBox = {69, 18, 10, 10};
-SDL_Rect AI::gameRect = {40, 0, 370, 800};
-int AI::fullPause = 1000;
-float AI::objSpeed = .15;
-
 AI::AI(){
     // init seed
     srand( time(NULL) );
@@ -28,7 +22,7 @@ int AI::addObjects(int score, std::vector<Drawable> &objects){
     this->addFunctions[index](objects);
     // Get distance in time (length added / velocity of obj)
     time = objects.back().getY();
-    time = time / objSpeed; // time = px * speed
+    time = time / config::fgSpeed; // time = px * speed
     return time;
 }
 
@@ -45,18 +39,18 @@ void AI::smallLeft(int y, std::vector<Drawable> &objects){
     // renders small block on left side
     //[x]--
     //------ start
-    objects.push_back(Drawable(AI::smallBox,
-			       SDL_Rect({AI::gameRect.x, y, 0, 0}),
-			       0.15));
+    objects.push_back(Drawable(config::smallBox,
+			       SDL_Rect({config::gameRect.x, y, 0, 0}),
+			       config::fgSpeed));
 }
 // Section functions
 void AI::smallRight(int y, std::vector<Drawable> &objects){
     // renders small block on left side
     //[x]--
     //------ start
-    objects.push_back(Drawable(AI::smallBox,
-			       SDL_Rect({AI::gameRect.x + gameRect.w - (smallBox.w * 10), y, 0, 0}),
-			       0.15));
+    objects.push_back(Drawable(config::smallBox,
+			       SDL_Rect({config::gameRect.x + config::gameRect.w - (config::smallBox.w * config::scale), y, 0, 0}),
+			       config::fgSpeed));
 }
 
 void AI::section_A(std::vector<Drawable> &objects){
@@ -64,9 +58,9 @@ void AI::section_A(std::vector<Drawable> &objects){
     // --[x]
     //[x]--
     //------ start
-    int y = AI::smallBox.h * -10;
+    int y = config::smallBox.h * (-1 * config::scale);
     AI::smallLeft(y, objects);
-    y -= fullPause/2;
+    y -= config::obstFreq / 2;
     AI::smallRight(y, objects);
 }
 
@@ -75,24 +69,26 @@ void AI::section_B(std::vector<Drawable> &objects){
     // --[x]
     //[x]--
     //------ start
-    int y = AI::smallBox.h * -10;
+    int y = config::smallBox.h * (-1 * config::scale);;
     AI::smallLeft(y, objects);
-    y -= fullPause/4;
+    y -= config::obstFreq / 4;
     AI::smallRight(y, objects);
 }
 
 void AI::section_C(std::vector<Drawable> &objects){
     // renders small block on left side
+    //[x]--
+    // --[x]
     // --[x]
     //[x]--
     //------ start
-    int y = AI::smallBox.h * -10;
+    int y = config::smallBox.h * (-1 * config::scale);
     AI::smallLeft(y, objects);
-    y -= fullPause/4;
+    y -= config::obstFreq / 4;
     AI::smallRight(y, objects);
-    y -= fullPause/2;
+    y -= config::obstFreq / 2;
     AI::smallRight(y, objects);
-    y -= fullPause/6;
+    y -= config::obstFreq / 6;
     AI::smallLeft(y, objects);
 }
 
