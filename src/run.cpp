@@ -165,7 +165,6 @@ int main(int argc, char* argv[]){
 	    std::cout << "Number of obst: " << drawablesObst.size() << std::endl;
 	    // remeber gameRect.y == 0
 	    // Use AI
-	    // call addObjects on &drawablesObst
 	    // return int is added to obstDela
 	    obstDelta += ai.addObjects(currentTime, drawablesObst);
 	    obstDelta -= obstFreq;
