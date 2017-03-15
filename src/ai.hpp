@@ -7,6 +7,8 @@
 #include <SDL2/SDL.h>
 #include <vector>
 #include <iostream>
+#include <stdlib.h>
+#include <time.h>
 
 
 class AI {
@@ -22,14 +24,19 @@ public:
     static SDL_Rect gameRect;
   
 private:
+    // Static pauses
+    static int fullPause;
+    static float objSpeed;
     // vector of drawable sections.
     std::vector<void(*)(std::vector<Drawable>&)> addFunctions;
     // returns index given a score.
     int getIndex(int);
     // Section functions added to addFunctions
+    static void smallLeft(int, std::vector<Drawable> &);
+    static void smallRight(int, std::vector<Drawable> &);
     static void section_A(std::vector<Drawable> &);
-    //void section_B(std::vector<Drawable> &);
-    //void section_C(std::vector<Drawable> &);
+    static void section_B(std::vector<Drawable> &);
+    static void section_C(std::vector<Drawable> &);
 };
 
 

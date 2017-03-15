@@ -16,7 +16,7 @@ int main(int argc, char* argv[]){
     //scale for screen dimensions
     int scale = 10;
     // obstacle vars
-    int obstFreq = 8000;
+    int obstFreq = 2000;
     int obstDelta = 0;
     //gravity constant
     float grav = -1.025;
@@ -28,14 +28,21 @@ int main(int argc, char* argv[]){
     SDL_Rect playerGRight = {57, 15, 7, 13};
     SDL_Rect longBox = {49, 2, 24, 10};
     SDL_Rect smallBox = {69, 18, 10, 10};
+    SDL_Rect start = {49, 47, 33, 26};
     SDL_Rect gameRect = {leftSide.w * 10, 0, background.w * 10, background.h * 10};
     std::vector<Drawable> drawablesBG;
     std::vector<Drawable> drawablesObst;
 
     float startingVelocity = 0.05;
-    Drawable player = Drawable(playerGLeft, SDL_Rect({leftSide.w * scale + 1, 400, 0, 0}), startingVelocity);
-
-    Drawable BG = Drawable(background, SDL_Rect({leftSide.w * scale, 0, 0, 0}), 0.075);
+    Drawable player = Drawable(playerGLeft,
+			       SDL_Rect({leftSide.w * scale + 1, 400, 0, 0}),
+			       startingVelocity);
+    Drawable startScreen = Drawable(start,
+				    SDL_Rect({(gameRect.w / 2) - (start.w / 2 * 10) + gameRect.x, 10, 0, 0}),
+				    0);
+    Drawable BG = Drawable(background,
+			   SDL_Rect({leftSide.w * scale, 0, 0, 0}),
+			   0.075);
 
     // SDL Window
     SDL_Window *gWindow = NULL;
@@ -47,6 +54,8 @@ int main(int argc, char* argv[]){
     AI ai;
     // Set up the quit boolean
     bool done = false;
+    // Starting screen
+    bool bStart = true;
     // Set up the event
     SDL_Event event;
     // Time vars
@@ -85,6 +94,45 @@ int main(int argc, char* argv[]){
     }
     lastTime = SDL_GetTicks();
     while(!done){
+        // Start sequence
+        currentTime = SDL_GetTicks();
+	tDelta = currentTime - lastTime;
+	lastTime = currentTime;
+	if (bStart) {
+		// update sides
+		for (auto it = drawablesBG.begin(); it != drawablesBG.end(); it++) {
+		    it->updatePositionY(player, tDelta);
+		    if (it->getY() > 0.0) {
+			it->setY(it->getY() - 60.0);
+		    }
+		}
+		// Update BG
+		BG.updatePositionY(tDelta);
+		if (BG.getY() > 0.0) {
+		    BG.setY(BG.getY() - 60);
+		}
+		BG.render();
+		for (auto it = drawablesBG.begin(); it != drawablesBG.end(); it++) {
+		    it->render();
+		}
+		// obstacles
+		for (auto it = drawablesObst.begin(); it != drawablesObst.end(); it++) {
+		    it->render();
+		}
+		player.render();
+		// Start screen
+		startScreen.render();
+		while(SDL_PollEvent(&event)){
+		    if(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE){
+			done = true;
+		    }
+		    else if( event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE){ 
+			bStart = false;
+		    }
+		}
+		SDL_RenderPresent( gRenderer );
+		continue;
+	}
     	// quit
     	while(SDL_PollEvent(&event)){
 	        if(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE){
@@ -105,9 +153,6 @@ int main(int argc, char* argv[]){
                 }
             }
         }
-        currentTime = SDL_GetTicks();
-	tDelta = currentTime - lastTime;
-	lastTime = currentTime;
         // Update BG
         BG.updatePositionY(tDelta);
         if (BG.getY() > 0.0) {
@@ -122,7 +167,7 @@ int main(int argc, char* argv[]){
 	    // Use AI
 	    // call addObjects on &drawablesObst
 	    // return int is added to obstDela
-	    ai.addObjects(currentTime, drawablesObst);
+	    obstDelta += ai.addObjects(currentTime, drawablesObst);
 	    obstDelta -= obstFreq;
 	}
 	// Update Obstacles
@@ -137,7 +182,7 @@ int main(int argc, char* argv[]){
 	    // remove it out of game. note: gameRect.y == 0
 	    if (it->getY() > gameRect.h ) {
 	        drawablesObst.erase(it);
-            it--;
+		it--;
 	    }
 	}
     	// Update player
