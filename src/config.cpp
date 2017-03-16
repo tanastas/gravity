@@ -41,6 +41,7 @@ namespace config {
 			       0,
 			       background.w * scale,
 			       height};
+}
 
 
 #endif /* CONFIG */
