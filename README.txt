@@ -18,4 +18,12 @@ user input - possible static method, most likely in main game loop though
     toggle state of global boolean gravity variable - left right
     relies on global acceleration variable
 
+requirements:
+  SDL2
+  SDL2/SDL2_image
 
+compilation:
+  linux:
+    `make`
+  mac:
+    `make mac`

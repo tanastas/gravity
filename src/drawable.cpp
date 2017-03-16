@@ -84,7 +84,7 @@ void Drawable::updatePositionX(std::vector<Drawable> &background, std::vector<Dr
             realX = tempX;
         }
     }
-	for (auto it = obstacles.begin(); it != obstacles.end(); it++) {
+    for (auto it = obstacles.begin(); it != obstacles.end(); it++) {
         if (*(this) < *(it)) {
             realX = tempX;
         }
