@@ -235,13 +235,13 @@ void AI::section_J(std::vector<Drawable> &objects){
   // [x]--
     int y = config::smallBox.h * (-1 * config::scale);
     AI::smallLeft(y, objects);
-    y -= config::smallBox.h * config::scale / .9;
+    y -= config::smallBox.h * config::scale * 1.5;
     AI::smallMiddle(y, objects);
-    y -= config::smallBox.h * config::scale / .9;
+    y -= config::smallBox.h * config::scale * 1.5;
     AI::smallLeft(y, objects);
-    y -= config::smallBox.h * config::scale / .9;
+    y -= config::smallBox.h * config::scale * 1.5;
     AI::smallRight(y, objects);
-    y -= config::smallBox.h * config::scale / .9;
+    y -= config::smallBox.h * config::scale * 1.5;
     AI::smallLeft(y, objects);
 } 
 
