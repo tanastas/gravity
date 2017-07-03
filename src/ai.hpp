@@ -24,6 +24,7 @@ public:
 private:
     // vector of drawable sections.
     std::vector<void(*)(std::vector<Drawable>&)> addFunctions;
+    //NOTE: vector is of functions which take the vector of drawables
     // returns index given a score.
     int getIndex(int);
     // Section functions added to addFunctions

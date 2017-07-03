@@ -28,6 +28,8 @@ int AI::addObjects(int score, std::vector<Drawable> &objects){
     int time = 0;
     // Get the index of the level to add
     int index = this->getIndex(score);
+    //debug purposes
+    //std::cout << "about to add level index: " << index << std::endl;
     // add it to the vector
     this->addFunctions[index](objects);
     // Get distance in time (length added / velocity of obj)
